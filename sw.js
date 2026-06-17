@@ -1,4 +1,4 @@
-const CACHE='ecsb-track-v2';
+const CACHE='ecsb-track-v2-firebase-fix';
 const SHELL=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).catch(()=>{}));});
 self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim());});
