@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ECSB Project Tracking</title>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <style>
+    :root{--nav:#252b54;--blue:#4058ff;--bg:#f3f6fb;--card:#fff;--text:#101632;--muted:#65708d;--danger:#d64242;--warn:#c97800;--ok:#129766;--line:#e1e6f2}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .app{display:flex;min-height:100vh}.side{width:232px;background:var(--nav);color:white;padding:24px 16px;display:flex;flex-direction:column;gap:24px}.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.4px}.logo{width:30px;height:30px;border-radius:50%;background:#dc2026;display:grid;place-items:center;color:#ffd24d;font-family:serif;font-weight:900}.small{display:block;color:#9aa4d0;font-size:10px;letter-spacing:2px;margin-top:2px}.nav button{width:100%;border:0;background:transparent;color:#c7cef4;text-align:left;padding:13px 14px;border-radius:10px;font-weight:700;cursor:pointer;margin:4px 0}.nav button.active,.nav button:hover{background:var(--blue);color:white}.user{margin-top:auto;border-top:1px solid rgba(255,255,255,.14);padding:14px 12px;color:#cbd3ff}.main{flex:1;padding:34px;max-width:1100px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px}.notice{border:1px solid #f1c36a;background:#fff7e6;color:#8a5700;padding:16px;border-radius:12px;margin:0 0 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}.btn{border:0;border-radius:9px;padding:10px 14px;font-weight:800;cursor:pointer}.btn.primary{background:var(--blue);color:white}.btn.light{background:white;border:1px solid var(--line);color:var(--text)}.btn.danger{background:var(--danger);color:white}.eyebrow{color:#9aa2b8;font-size:12px;letter-spacing:4px;font-weight:800;text-transform:uppercase}h1{margin:10px 0 26px;font-size:28px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 8px 20px rgba(31,43,82,.08)}.num{font-size:34px;font-weight:900}.dangerText{color:var(--danger)}.warnText{color:var(--warn)}.okText{color:var(--ok)}.muted{color:var(--muted)}.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:14px}.table{width:100%;border-collapse:collapse}.table th,.table td{border-bottom:1px solid var(--line);text-align:left;padding:12px 8px;font-size:14px}.table th{color:#65708d}.hidden{display:none!important}.login{min-height:100vh;display:grid;place-items:center;background:linear-gradient(140deg,#252b54,#4158ff)}.loginBox{background:white;width:min(420px,92vw);border-radius:18px;padding:28px;box-shadow:0 20px 70px rgba(0,0,0,.25)}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;margin:6px 0 12px;font:inherit}label{font-weight:700;font-size:13px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.actions{display:flex;gap:8px;flex-wrap:wrap}.status{position:fixed;right:18px;bottom:18px;padding:10px 12px;border-radius:10px;background:#101632;color:white;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.2)}@media(max-width:760px){.app{display:block}.side{width:100%;min-height:auto}.main{padding:20px}.row{grid-template-columns:1fr}.table{font-size:12px}}
+  </style>
+</head>
+<body>
+  <div id="login" class="login">
+    <div class="loginBox">
+      <div class="brand" style="color:#101632"><div class="logo">EC</div><div>ECSB<span class="small" style="color:#65708d">PROJECT TRACKING</span></div></div>
+      <h2>Login</h2>
+      <label>Username</label><input id="loginUser" value="Administrator" autocomplete="username">
+      <label>Password</label><input id="loginPass" type="password" value="admin" autocomplete="current-password">
+      <button id="loginBtn" class="btn primary" style="width:100%">Login</button>
+      <p id="loginMsg" class="muted"></p>
+    </div>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="side">
+      <div class="brand"><div class="logo">EC</div><div>ECSB<span class="small">PROJECT TRACKING</span></div></div>
+      <nav class="nav">
+        <button data-page="deadlines" class="active">◴ &nbsp; Deadlines</button>
+        <button data-page="projects">□ &nbsp; Projects</button>
+        <button data-page="team">⊙ &nbsp; Team</button>
+        <button data-page="settings">⚙ &nbsp; Settings</button>
+      </nav>
+      <div class="user"><b id="currentUser">Administrator</b><br><span id="currentRole" class="small">Administrator</span><br><br><button id="logoutBtn" class="btn light">Logout</button></div>
+    </aside>
+    <main class="main">
+      <div id="defaultNotice" class="notice hidden"><div>⚠ You're still using the default admin password.<br><b>Change it so no one else can get in.</b></div><button class="btn light" onclick="showPage('settings')">Change password</button></div>
+
+      <section id="page-deadlines">
+        <div class="eyebrow">Overview</div><h1>Key deadlines</h1>
+        <div class="cards">
+          <div class="card"><div id="overdue" class="num dangerText">0</div><div class="muted">Overdue</div></div>
+          <div class="card"><div id="due7" class="num warnText">0</div><div class="muted">Due within 7 days</div></div>
+          <div class="card"><div id="onTrack" class="num okText">0</div><div class="muted">On track</div></div>
+          <div class="card"><div id="totalProjects" class="num">0</div><div class="muted">Projects</div></div>
+        </div>
+        <div class="eyebrow">Next up</div><div id="nextUp" class="panel muted">No open deadlines<br><br>Add a project and its key dates to see them here.</div>
+      </section>
+
+      <section id="page-projects" class="hidden">
+        <div class="topbar"><div><div class="eyebrow">Projects</div><h1>Project list</h1></div><button class="btn primary" onclick="openProjectForm()">+ Add project</button></div>
+        <div class="panel"><table class="table"><thead><tr><th>Project</th><th>Customer</th><th>Owner</th><th>Deadline</th><th>Status</th><th></th></tr></thead><tbody id="projectRows"></tbody></table></div>
+      </section>
+
+      <section id="page-team" class="hidden">
+        <div class="eyebrow">Team</div><h1>Team members</h1>
+        <div class="panel"><table class="table"><thead><tr><th>Name</th><th>Role</th></tr></thead><tbody id="teamRows"></tbody></table></div>
+      </section>
+
+      <section id="page-settings" class="hidden">
+        <div class="eyebrow">Settings</div><h1>Admin settings</h1>
+        <div class="panel">
+          <h3>Change password</h3>
+          <label>New password</label><input id="newPass" type="password" placeholder="Enter new password">
+          <button class="btn primary" onclick="changePassword()">Save password</button>
+        </div>
+        <div class="panel">
+          <h3>Firebase status</h3><p id="firebaseStatus" class="muted">Checking...</p>
+          <button class="btn light" onclick="seedDefaults()">Repair / Initialize database</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="projectModal" class="login hidden" style="background:rgba(16,22,50,.55)">
+    <div class="loginBox">
+      <h2 id="modalTitle">Add project</h2>
+      <input id="editId" type="hidden">
+      <label>Project name</label><input id="pName">
+      <label>Customer</label><input id="pCustomer">
+      <div class="row"><div><label>Owner</label><input id="pOwner"></div><div><label>Deadline</label><input id="pDeadline" type="date"></div></div>
+      <label>Status</label><select id="pStatus"><option>Open</option><option>In Progress</option><option>Completed</option><option>Hold</option></select>
+      <label>Remarks</label><textarea id="pRemarks" rows="3"></textarea>
+      <div class="actions"><button class="btn primary" onclick="saveProject()">Save</button><button class="btn light" onclick="closeProjectForm()">Cancel</button></div>
+    </div>
+  </div>
+  <div id="toast" class="status hidden"></div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+    import { initializeFirestore, doc, getDoc, setDoc, collection, getDocs, addDoc, updateDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: 'AIzaSyBVZ_C6bqxFnhybNr_G8424Wf342V8NAlw',
+      authDomain: 'ecsb-project-tracking-d2a89.firebaseapp.com',
+      projectId: 'ecsb-project-tracking-d2a89',
+      storageBucket: 'ecsb-project-tracking-d2a89.firebasestorage.app',
+      messagingSenderId: '568276550725',
+      appId: '1:568276550725:web:c4f0ac6dc682bd7b9ccf2c'
+    };
+
+    const app = initializeApp(firebaseConfig);
+    // Important fix for GitHub Pages / Chrome networks that block Firebase WebChannel.
+    // Long-polling prevents the common error: 'Failed to get document because the client is offline'.
+    const db = initializeFirestore(app, {
+      experimentalAutoDetectLongPolling: true,
+      useFetchStreams: false
+    });
+    let users = {};
+    let currentUser = null;
+    let projects = [];
+
+    const $ = id => document.getElementById(id);
+    function toast(msg){$('toast').textContent=msg;$('toast').classList.remove('hidden');setTimeout(()=>$('toast').classList.add('hidden'),3000)}
+    window.showPage = function(page){document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));$('page-'+page).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));}
+    document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+
+    async function seedDefaults(){
+      try{
+        const settingsRef = doc(db,'settings','app');
+        let existing = {};
+        try{
+          const snap = await getDoc(settingsRef);
+          existing = snap.exists() ? snap.data() : {};
+        }catch(e){
+          console.warn('Cannot read settings before repair:', e);
+        }
+        const defaultUsers = existing.users || users || { Administrator:{ password:'admin', role:'Administrator' } };
+        if(!defaultUsers.Administrator) defaultUsers.Administrator = { password:'admin', role:'Administrator' };
+        await setDoc(settingsRef,{...existing, users: defaultUsers, updatedAt: new Date().toISOString()},{merge:true});
+        users = defaultUsers;
+        localStorage.setItem('ecsb_users',JSON.stringify(users));
+        $('firebaseStatus').textContent = 'Connected to Firebase Firestore.';
+        toast('Database repaired / initialized');
+      }catch(err){
+        console.error(err);
+        $('firebaseStatus').textContent = 'Firebase still cannot connect: ' + err.message;
+        $('loginMsg').textContent = 'Firebase still offline / blocked. Please check Firestore Rules and API key referrer.';
+        users = JSON.parse(localStorage.getItem('ecsb_users') || '{"Administrator":{"password":"admin","role":"Administrator"}}');
+      }
+    }
+    window.seedDefaults = seedDefaults;
+
+    async function loadSettings(){
+      try{
+        const snap = await getDoc(doc(db,'settings','app'));
+        if(!snap.exists() || !snap.data() || !snap.data().users){
+          users = { Administrator:{ password:'admin', role:'Administrator' } };
+          await setDoc(doc(db,'settings','app'),{users, updatedAt: new Date().toISOString()},{merge:true});
+        }else{
+          users = snap.data().users || {};
+        }
+        localStorage.setItem('ecsb_users',JSON.stringify(users));
+        $('firebaseStatus').textContent = 'Connected to Firebase Firestore.';
+        $('loginMsg').textContent = '';
+      }catch(err){
+        console.error(err);
+        $('firebaseStatus').textContent = 'Firebase connection failed: ' + err.message;
+        $('loginMsg').textContent = 'Firebase offline / blocked. Using local backup login.';
+        users = JSON.parse(localStorage.getItem('ecsb_users') || '{"Administrator":{"password":"admin","role":"Administrator"}}');
+      }
+    }
+
+    async function doLogin(){
+      $('loginMsg').textContent = 'Checking...';
+      await loadSettings();
+      const u = $('loginUser').value.trim();
+      const p = $('loginPass').value;
+      if(!users || !users[u]){ $('loginMsg').textContent = 'User not found.'; return; }
+      if(String(users[u].password) !== String(p)){ $('loginMsg').textContent = 'Wrong password.'; return; }
+      currentUser = {name:u, ...users[u]};
+      $('currentUser').textContent = currentUser.name;
+      $('currentRole').textContent = currentUser.role || 'User';
+      $('defaultNotice').classList.toggle('hidden', !(u==='Administrator' && p==='admin'));
+      $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+      await loadProjects(); renderTeam(); showPage('deadlines');
+    }
+    $('loginBtn').onclick = doLogin;
+    $('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+    $('logoutBtn').onclick = ()=>location.reload();
+
+    async function loadProjects(){
+      try{
+        const qs = await getDocs(collection(db,'projects'));
+        projects = qs.docs.map(d=>({id:d.id,...d.data()}));
+        localStorage.setItem('ecsb_projects',JSON.stringify(projects));
+      }catch(err){
+        console.error(err); toast('Using offline project data');
+        projects = JSON.parse(localStorage.getItem('ecsb_projects') || '[]');
+      }
+      renderProjects(); renderDashboard();
+    }
+
+    function renderProjects(){
+      const rows = projects.sort((a,b)=>(a.deadline||'9999').localeCompare(b.deadline||'9999')).map(p=>`<tr><td><b>${esc(p.name||'')}</b><br><span class="muted">${esc(p.remarks||'')}</span></td><td>${esc(p.customer||'')}</td><td>${esc(p.owner||'')}</td><td>${esc(p.deadline||'')}</td><td>${esc(p.status||'Open')}</td><td><button class="btn light" onclick="editProject('${p.id}')">Edit</button> <button class="btn danger" onclick="removeProject('${p.id}')">Delete</button></td></tr>`).join('');
+      $('projectRows').innerHTML = rows || '<tr><td colspan="6" class="muted">No projects yet.</td></tr>';
+    }
+    function renderDashboard(){
+      const today = new Date(); today.setHours(0,0,0,0); const plus7 = new Date(today); plus7.setDate(today.getDate()+7);
+      let overdue=0,due7=0,onTrack=0; const open = projects.filter(p=>p.status!=='Completed');
+      open.forEach(p=>{ if(!p.deadline){onTrack++;return} const d=new Date(p.deadline+'T00:00:00'); if(d<today)overdue++; else if(d<=plus7)due7++; else onTrack++; });
+      $('overdue').textContent=overdue; $('due7').textContent=due7; $('onTrack').textContent=onTrack; $('totalProjects').textContent=projects.length;
+      const next = open.filter(p=>p.deadline).sort((a,b)=>a.deadline.localeCompare(b.deadline)).slice(0,6);
+      $('nextUp').innerHTML = next.length ? '<table class="table"><tbody>'+next.map(p=>`<tr><td><b>${esc(p.name)}</b><br><span class="muted">${esc(p.customer||'')}</span></td><td>${esc(p.deadline)}</td><td>${esc(p.owner||'')}</td></tr>`).join('')+'</tbody></table>' : 'No open deadlines<br><br>Add a project and its key dates to see them here.';
+    }
+    function renderTeam(){
+      $('teamRows').innerHTML = Object.keys(users||{}).map(k=>`<tr><td>${esc(k)}</td><td>${esc(users[k].role||'User')}</td></tr>`).join('') || '<tr><td colspan="2" class="muted">No users found.</td></tr>';
+    }
+    window.openProjectForm = function(){ $('editId').value=''; $('modalTitle').textContent='Add project'; ['pName','pCustomer','pOwner','pDeadline','pRemarks'].forEach(id=>$(id).value=''); $('pStatus').value='Open'; $('projectModal').classList.remove('hidden'); }
+    window.closeProjectForm = function(){ $('projectModal').classList.add('hidden'); }
+    window.editProject = function(id){ const p=projects.find(x=>x.id===id); if(!p)return; $('editId').value=id; $('modalTitle').textContent='Edit project'; $('pName').value=p.name||''; $('pCustomer').value=p.customer||''; $('pOwner').value=p.owner||''; $('pDeadline').value=p.deadline||''; $('pStatus').value=p.status||'Open'; $('pRemarks').value=p.remarks||''; $('projectModal').classList.remove('hidden'); }
+    window.saveProject = async function(){
+      const data={name:$('pName').value.trim(),customer:$('pCustomer').value.trim(),owner:$('pOwner').value.trim(),deadline:$('pDeadline').value,status:$('pStatus').value,remarks:$('pRemarks').value.trim(),updatedAt:new Date().toISOString()};
+      if(!data.name){toast('Please enter project name');return}
+      try{ if($('editId').value) await updateDoc(doc(db,'projects',$('editId').value),data); else await addDoc(collection(db,'projects'),data); }
+      catch(err){ console.error(err); if($('editId').value){projects=projects.map(p=>p.id===$('editId').value?{...p,...data}:p)} else {projects.push({id:'local-'+Date.now(),...data})} localStorage.setItem('ecsb_projects',JSON.stringify(projects)); toast('Saved offline only'); }
+      closeProjectForm(); await loadProjects();
+    }
+    window.removeProject = async function(id){ if(!confirm('Delete this project?'))return; try{ await deleteDoc(doc(db,'projects',id)); }catch(err){console.error(err); projects=projects.filter(p=>p.id!==id); localStorage.setItem('ecsb_projects',JSON.stringify(projects));} await loadProjects(); }
+    window.changePassword = async function(){ const pass=$('newPass').value; if(pass.length<4){toast('Password minimum 4 characters');return} if(!currentUser){return} users[currentUser.name]={...(users[currentUser.name]||{}), password:pass}; try{await setDoc(doc(db,'settings','app'),{users,updatedAt:new Date().toISOString()},{merge:true});}catch(e){localStorage.setItem('ecsb_users',JSON.stringify(users));} $('newPass').value=''; $('defaultNotice').classList.add('hidden'); toast('Password updated'); }
+    function esc(s){return String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+    loadSettings();
+  </script>
+</body>
+</html>
